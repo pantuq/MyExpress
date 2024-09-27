@@ -8,12 +8,18 @@ const {Article} = require('../../models');
 router.get('/', async function(req,res){
     // 添加上try catch代码块，防止错误导致项目崩溃
     try{
-        const conditions = {
-            order: [['id', 'DESC']]
-            // 倒序查询
-        };
-
         const query = req.query;
+        const pageSize = Math.abs(Number(query.pageSize)) || 10;
+        const currentPage = Math.abs(Number(query.currentPage)) || 1;
+        const offset = (currentPage - 1) * pageSize;
+
+        const conditions = {
+            order: [['id', 'DESC']],
+            // 倒序查询
+            limit: pageSize,
+            offset: offset
+        };
+        
         if(query.title){
             conditions.where = {
                 title: {
@@ -22,15 +28,21 @@ router.get('/', async function(req,res){
             }
         }
     
-        const articles =await Article.findAll(conditions);
+        // count是查询出来的数据总数，rows才是最终查询到的数据
+        const {count,rows} =await Article.findAndCountAll(conditions);
         // 查询所有的文章，
         // 但是需要注意的是，这个函数是异步函数，所以需要用到async await
     
-        if(articles){
+        if(rows){
             res.json({
                 status: 200,
                 message: '文章列表查询成功',
-                data: articles
+                data: rows,
+                pagination: {
+                    total: count,
+                    pageSize: pageSize,
+                    currentPage: currentPage
+                }
             })
         }else{
             res.json({
