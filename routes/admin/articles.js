@@ -97,7 +97,10 @@ router.get('/:id',async function(req,res){
  */
 router.post('/', async function(req,res){
     try{
-        const article =await Article.create(req.body);
+        // 白名单过滤
+        // 防止用户将无关的数据插入在数据库中
+        const body = filterBody(req)
+        const article =await Article.create(body);
 
         res.json({
             status: 201,
@@ -151,8 +154,9 @@ router.put("/:id", async function(req,res){
     try{
         const { id } = req.params
         const article = await Article.findByPk(id)
+        const body = filterBody(req)
         if(article){
-            await article.update(req.body)
+            await article.update(body)
 
             res.json({
                 status: 200,
@@ -173,5 +177,17 @@ router.put("/:id", async function(req,res){
         })
     }
 })
+
+/**
+ * 公共方法：白名单过滤
+ * @param {Object} body 需要过滤的对象
+ * 
+ */
+function filterBody(req){
+    return {
+        title: req.body.title,
+        content: req.body.content
+    }
+}
 
 module.exports = router;
