@@ -108,11 +108,22 @@ router.post('/', async function(req,res){
             data: article
         })
     }catch(err){
-        res.json({
-            status: 500,
-            message: '文章新增失败',
-            error:[err.message]
-        })
+        if(err.name === 'SequelizeValidationError'){
+            const errors = err.errors.map(error => error.message)
+            res.json({
+                status: 400,
+                // 状态码400的意思是请求中出现语法错误
+                // 无效参数或者格式不正确等问题
+                message: '请求参数错误',
+                error: errors
+            })
+        }else{
+            res.json({
+                status: 500,
+                message: '文章新增失败',
+                error:[err.message]
+            })
+        }
     }
 })
 
