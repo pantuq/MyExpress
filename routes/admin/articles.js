@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const {Op} = require('sequelize');
+const {
+    NotFoundError,
+    success,
+    failure
+} = require('../../utils/response');
 
 const {Article} = require('../../models');
+const article = require('../../models/article');
 // 引入Article
 
 router.get('/', async function(req,res){
@@ -34,14 +40,12 @@ router.get('/', async function(req,res){
         // 但是需要注意的是，这个函数是异步函数，所以需要用到async await
     
         if(rows){
-            res.json({
-                status: 200,
-                message: '文章列表查询成功',
-                data: rows,
+            success(res,"文章列表查询成功",{
+                articles: rows,
                 pagination: {
-                    total: count,
+                    current: currentPage,
                     pageSize: pageSize,
-                    currentPage: currentPage
+                    total: count
                 }
             })
         }else{
@@ -53,11 +57,7 @@ router.get('/', async function(req,res){
 
     }catch(err){
         // 捕获错误
-        res.json({
-            status: 500,
-            message: '文章列表查询失败',
-            error:[err.message]
-        })
+        failure(res.err)
     }
 })
 
@@ -65,29 +65,17 @@ router.get('/', async function(req,res){
  * 查询文章详情
  * GET admin/articles/:id
  */
-router.get('/:id',async function(req,res){
+router.get('/:id', async function(req,res){
     // 请求路径的参数 保存在resquest的参数中
     try{
-        const {id} = req.params;
-        const article =await Article.findByPk(id);
-        if(article){
-            res.json({
-                status: 200,
-                message: '文章详情查询成功',
-                data: article
-            })
-        }else{
-            res.json({
-                status: 404,
-                message: '文章不存在',
-            })
-        }
+        const {id} = req.params
+        const article = await Article.findByPk(id)
+
+        res.json({article})
+        
+    //    success(res,"文章详情查询成功",{article})
     }catch(err){
-        res.json({
-            status: 500,
-            message: '文章详情查询失败',
-            error:[err.message]
-        })
+        failure(res.err)
     }
 })
 
@@ -102,28 +90,9 @@ router.post('/', async function(req,res){
         const body = filterBody(req)
         const article =await Article.create(body);
 
-        res.json({
-            status: 201,
-            message: '文章新增成功',
-            data: article
-        })
+        success(res,"文章新增成功",{article},201)
     }catch(err){
-        if(err.name === 'SequelizeValidationError'){
-            const errors = err.errors.map(error => error.message)
-            res.json({
-                status: 400,
-                // 状态码400的意思是请求中出现语法错误
-                // 无效参数或者格式不正确等问题
-                message: '请求参数错误',
-                error: errors
-            })
-        }else{
-            res.json({
-                status: 500,
-                message: '文章新增失败',
-                error:[err.message]
-            })
-        }
+        failure(res.err)
     }
 })
 
@@ -133,61 +102,57 @@ router.post('/', async function(req,res){
  */
 router.delete('/:id', async function(req,res){
     try{
-        const { id } = req.params;
-        const article = await Article.findByPk(id);
-        if(article){
-            await article.destroy();
-
-            res.json({
-                status: 200,
-                message: '文章删除成功'
-            })
-        }else{
-            res.json({
-                status: 404,
-                message: '文章不存在'
-            })
+        
+        const {id} = req.params
+        const article = await Article.findByPk(id)
+        if(!article){
+            throw new NotFoundError(`ID：${id}的文章不存在}`)
         }
+        
+        await article.destroy();
+        success(res,"文章删除成功")
+        
     }catch(err){
-        res.json({
-            status: 500,
-            message: '文章删除失败',
-            error:[err.message]
-        })
+        failure(res.err)
     }
 })
-
+//
 /**
  * 修改文章
  * PUT admin/articles/:id
  */
 router.put("/:id", async function(req,res){
     try{
-        const { id } = req.params
+        const {id} = req.params
         const article = await Article.findByPk(id)
-        const body = filterBody(req)
-        if(article){
-            await article.update(body)
-
-            res.json({
-                status: 200,
-                message: '文章修改成功',
-                data: article
-            })
-        }else{
-            res.json({
-                status: 404,
-                message: '文章不存在'
-            })
+        if(!article){
+            throw new NotFoundError(`ID：${id}的文章不存在}`)
         }
+        
+        const body = filterBody(req)
+        
+        await article.update(body)
+
+        success(res,"文章修改成功",{article})
     }catch(err){
-        res.json({
-            status: 500,
-            meaasge: '文章修改失败',
-            error: [err.message]
-        })
+        failure(res.err)
     }
 })
+
+/**
+ * 公共方法：查询数据
+ * @param {Object} query 查询参数
+ */
+async function getArticle(req){
+    const {id} = req.params
+    
+    const article = await Article.findByPk(id)
+    if(!article){
+        throw new NotFoundError(`ID：${id}的文章不存在}`)
+    }
+
+    return article
+}
 
 /**
  * 公共方法：白名单过滤
