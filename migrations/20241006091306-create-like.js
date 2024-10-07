@@ -2,19 +2,20 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Articles', {
+    await queryInterface.createTable('Likes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER.UNSIGNED
+        type: Sequelize.INTEGER.UNSINGED
       },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false
+      courseId: {
+        allowNull: false,
+        type: Sequelize.INTEGER.UNSINGED
       },
-      content: {
-        type: Sequelize.TEXT
+      userId: {
+        allowNull: false,
+        type: Sequelize.INTEGER.UNSINGED
       },
       createdAt: {
         allowNull: false,
@@ -25,8 +26,10 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.addIndex('Likes', ['userId']);
+    await queryInterface.addIndex('Likes', ['courseId']);
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Articles');
+    await queryInterface.dropTable('Likes');
   }
 };

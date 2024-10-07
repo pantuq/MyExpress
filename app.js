@@ -6,8 +6,12 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+
+
 // 配置后台文章列表列表路由
 const articleRouter = require('./routes/admin/articles');
+const categoryRouter = require('./routes/admin/categories');
+const settingRouter = require('./routes/admin/settings');
 
 const app = express();
 
@@ -23,8 +27,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+
 // 使用后台文章列表路由
 app.use('/admin/articles', articleRouter);
+app.use('/admin/categories', categoryRouter);
+app.use('/admin/settings', settingRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
