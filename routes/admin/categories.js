@@ -7,7 +7,7 @@ const {
     failure
 } = require('../../utils/response');
 
-const {Category} = require('../../models');
+const {Category,Course} = require('../../models');
 const category = require('../../models/category');
 // 引入Category
 
@@ -108,11 +108,20 @@ router.delete('/:id', async function(req,res){
         if(!category){
             throw new NotFoundError(`ID：${id}的分类不存在}`)
         }
+
+        const count = await Course.count({
+            where: {
+                categoryId: id
+            }
+        })
+        if(count > 0){
+            throw new Error(`该分类下有课程，无法删除`)
+        }
         
         await category.destroy();
         success(res,"分类删除成功")
         
-    }catch(err){
+    }catch(err){        
         failure(res,err)
     }
 })

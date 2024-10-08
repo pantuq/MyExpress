@@ -19,13 +19,21 @@ class NotFoundError extends Error {
   function failure(res,err){
     // console.log(11111,res,33333);
     
-      if(err.errors[0].type === 'Validation error'){
+      if(err.errors && err.errors[0].type === 'Validation error'){
           const errors = err.errors.map(error => error.message)
           res.json({
               status: 400,
               message: '请求参数错误',
               errors
           })
+      }
+
+      if(err.message === '该分类下有课程，无法删除'){
+        res.json({
+            status: 400,
+            message: err.message,
+            errors: [err.message]
+        })
       }
   
       if(err.name === 'NotFoundError'){
