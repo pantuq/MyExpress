@@ -81,7 +81,7 @@ router.get('/', async function(req,res){
 
     }catch(err){
         // 捕获错误
-        failure(res.err)
+        failure(res,err)
     }
 })
 
@@ -99,7 +99,7 @@ router.get('/:id', async function(req,res){
         
     //    success(res,"用户详情查询成功",{user})
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 
@@ -115,8 +115,8 @@ router.post('/', async function(req,res){
         const user =await User.create(body);
 
         success(res,"用户新增成功",{user},201)
-    }catch(err){
-        failure(res.err)
+    }catch(err){        
+        failure(res,err)
     }
 })
 
@@ -138,7 +138,7 @@ router.put("/:id", async function(req,res){
 
         success(res,"用户修改成功",{user})
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 

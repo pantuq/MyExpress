@@ -17,7 +17,9 @@ class NotFoundError extends Error {
   }
   
   function failure(res,err){
-      if(err.name === 'SequelizeValidationError'){
+    // console.log(11111,res,33333);
+    
+      if(err.errors[0].type === 'Validation error'){
           const errors = err.errors.map(error => error.message)
           res.json({
               status: 400,

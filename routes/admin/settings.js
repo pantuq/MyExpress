@@ -22,7 +22,7 @@ router.get('/', async function(req,res){
         
        success(res,"系统设置查询成功",{setting})
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 
@@ -41,7 +41,7 @@ router.put("/", async function(req,res){
 
         success(res,"系统设置修改成功",{setting})
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 

@@ -57,7 +57,7 @@ router.get('/', async function(req,res){
 
     }catch(err){
         // 捕获错误
-        failure(res.err)
+        failure(res,err)
     }
 })
 
@@ -75,7 +75,7 @@ router.get('/:id', async function(req,res){
         
     //    success(res,"分类详情查询成功",{category})
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 
@@ -92,7 +92,7 @@ router.post('/', async function(req,res){
 
         success(res,"分类新增成功",{category},201)
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 
@@ -113,7 +113,7 @@ router.delete('/:id', async function(req,res){
         success(res,"分类删除成功")
         
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 //
@@ -135,7 +135,7 @@ router.put("/:id", async function(req,res){
 
         success(res,"分类修改成功",{category})
     }catch(err){
-        failure(res.err)
+        failure(res,err)
     }
 })
 
