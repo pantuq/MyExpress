@@ -7,9 +7,9 @@ const {
     failure
 } = require('../../utils/response');
 
-const {Category,Course} = require('../../models');
-const category = require('../../models/category');
-// 引入Category
+const {Chapter,Course} = require('../../models');
+const chapter = require('../../models/chapter');
+// 引入Chapter
 
 router.get('/', async function(req,res){
     // 添加上try catch代码块，防止错误导致项目崩溃
@@ -19,29 +19,42 @@ router.get('/', async function(req,res){
         const currentPage = Math.abs(Number(query.currentPage)) || 1;
         const offset = (currentPage - 1) * pageSize;
 
+        if(!query.courseId){
+            throw new Error('获取章节列表失败，课程ID不能为空');
+        }       
+
         const conditions = {
+            ...getCondition(),
             order: [['rank','ASC'],['id', 'ASC']],
-            // 倒序查询
+            // 如果rank相等，就按照id升序排列
             limit: pageSize,
             offset: offset
         };
         
-        if(query.name){
+        if(query.title){
             conditions.where = {
-                name: {
-                    [Op.like]: `%${query.name}%`
+                title: {
+                    [Op.like]: `%${query.title}%`
+                }
+            }
+        }
+
+        if(query.courseId){
+            conditions.where = {
+                courseId: {
+                    [Op.eq]: query.courseId
                 }
             }
         }
     
         // count是查询出来的数据总数，rows才是最终查询到的数据
-        const {count,rows} =await Category.findAndCountAll(conditions);
-        // 查询所有的分类，
+        const {count,rows} =await Chapter.findAndCountAll(conditions);
+        // 查询所有的章节，
         // 但是需要注意的是，这个函数是异步函数，所以需要用到async await
     
         if(rows){
-            success(res,"分类列表查询成功",{
-                categorys: rows,
+            success(res,"章节列表查询成功",{
+                chapters: rows,
                 pagination: {
                     current: currentPage,
                     pageSize: pageSize,
@@ -51,7 +64,7 @@ router.get('/', async function(req,res){
         }else{
             res.json({
                 status: 404,
-                message: '分类列表为空',
+                message: '章节列表为空',
             })
         }
 
@@ -62,105 +75,113 @@ router.get('/', async function(req,res){
 })
 
 /**
- * 查询分类详情
- * GET admin/categorys/:id
+ * 查询章节详情
+ * GET admin/chapters/:id
  */
 router.get('/:id', async function(req,res){
     // 请求路径的参数 保存在resquest的参数中
     try{
         const {id} = req.params
-        const category = await Category.findByPk(id)
+        const conditions = getCondition()
+        const chapter = await Chapter.findByPk(id,conditions)
 
-        res.json({category})
+        res.json({chapter})
         
-    //    success(res,"分类详情查询成功",{category})
+    //    success(res,"章节详情查询成功",{chapter})
     }catch(err){
         failure(res,err)
     }
 })
 
 /**
- * 新增分类
- * POST admin/categorys
+ * 新增章节
+ * POST admin/chapters
  */
 router.post('/', async function(req,res){
     try{
         // 白名单过滤
         // 防止用户将无关的数据插入在数据库中
         const body = filterBody(req)
-        const category =await Category.create(body);
+        const chapter =await Chapter.create(body);
 
-        success(res,"分类新增成功",{category},201)
+        success(res,"章节新增成功",{chapter},201)
     }catch(err){
         failure(res,err)
     }
 })
 
 /**
- * 删除分类
- * DELETE admin/categorys/:id
+ * 删除章节
+ * DELETE admin/chapters/:id
  */
 router.delete('/:id', async function(req,res){
     try{
         
         const {id} = req.params
-        const category = await Category.findByPk(id)
-        if(!category){
-            throw new NotFoundError(`ID：${id}的分类不存在}`)
-        }
-
-        const count = await Course.count({
-            where: {
-                categoryId: id
-            }
-        })
-        if(count > 0){
-            throw new Error(`该分类下有课程，无法删除`)
+        const chapter = await Chapter.findByPk(id)
+        if(!chapter){
+            throw new NotFoundError(`ID：${id}的章节不存在`)
         }
         
-        await category.destroy();
-        success(res,"分类删除成功")
+        await chapter.destroy();
+        success(res,"章节删除成功")
         
-    }catch(err){        
+    }catch(err){
         failure(res,err)
     }
 })
 //
 /**
- * 修改分类
- * PUT admin/categorys/:id
+ * 修改章节
+ * PUT admin/chapters/:id
  */
 router.put("/:id", async function(req,res){
     try{
         const {id} = req.params
-        const category = await Category.findByPk(id)
-        if(!category){
-            throw new NotFoundError(`ID：${id}的分类不存在}`)
+        const chapter = await Chapter.findByPk(id)
+        if(!chapter){
+            throw new NotFoundError(`ID：${id}的章节不存在}`)
         }
         
         const body = filterBody(req)
         
-        await category.update(body)
+        await chapter.update(body)
 
-        success(res,"分类修改成功",{category})
+        success(res,"章节修改成功",{chapter})
     }catch(err){
         failure(res,err)
     }
 })
 
 /**
+ * 公共方法： 查询条件
+ */
+function getCondition(){
+    return {
+        attributes: { exclude: ['CourseId']},
+        include: [
+            {
+                model: Course,
+                as: 'course',
+                attributes: ['id','name']
+            }
+        ]
+    }
+}
+
+/**
  * 公共方法：查询数据
  * @param {Object} query 查询参数
  */
-async function getCategory(req){
+async function getChapter(req){
     const {id} = req.params
     
-    const category = await Category.findByPk(id)
-    if(!category){
-        throw new NotFoundError(`ID：${id}的分类不存在}`)
+    const chapter = await Chapter.findByPk(id)
+    if(!chapter){
+        throw new NotFoundError(`ID：${id}的章节不存在}`)
     }
 
-    return category
+    return chapter
 }
 
 /**
@@ -170,7 +191,10 @@ async function getCategory(req){
  */
 function filterBody(req){
     return {
-        name: req.body.name,
+        courseId: req.body.courseId,
+        title: req.body.title,
+        content: req.body.content,
+        video: req.body.video,
         rank: req.body.rank
     }
 }

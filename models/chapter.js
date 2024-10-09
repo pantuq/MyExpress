@@ -10,15 +10,67 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      models.Chapter.belongsTo(models.Course,{ as: 'course' })
     }
   }
   Chapter.init({
-    couseId: DataTypes.INTEGER,
-    title: DataTypes.STRING,
+    courseId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: '课程ID必须填写'
+        },
+        notEmpty: {
+          msg: '课程ID不能为空'
+        },
+        async isPresent(value){
+          const course = await sequelize.models.Course.findByPk(value);
+          if(!course){
+            throw new Error(`ID为${value}的课程不存在`)
+          }
+        }
+      }
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: '章节名称必须填写'
+        },
+        notEmpty: {
+          msg: '章节名称不能为空'
+        },
+        len: {
+          args: [2,25],
+          msg: '章节名称长度必须在2-25个字符之间'
+        }
+      }
+    },
     content: DataTypes.TEXT,
-    video: DataTypes.STRING,
-    rank: DataTypes.INTEGER
+    video: {
+      type: DataTypes.TEXT,
+      validate: {
+        isUrl: {
+          msg: '视频地址格式不正确'
+        }
+      }
+    },
+    rank: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: { msg: '排序必须填写' },
+        notEmpty: { msg: '排序不能为空' },
+        isInt: { msg: '排序必须为整数' },
+        isPositive(value){
+          if(value < 1){
+            throw new Error('排序必须为正整数')
+          }
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Chapter',

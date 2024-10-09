@@ -14,6 +14,7 @@ const categoryRouter = require('./routes/admin/categories');
 const settingRouter = require('./routes/admin/settings');
 const userRouter = require('./routes/admin/users');
 const courseRouter = require('./routes/admin/courses');
+const chapterRouter = require('./routes/admin/chapters');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/admin/categories', categoryRouter);
 app.use('/admin/settings', settingRouter)
 app.use('/admin/users', userRouter)
 app.use('/admin/courses', courseRouter)
+app.use('/admin/chapters', chapterRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
