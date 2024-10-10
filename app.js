@@ -15,6 +15,7 @@ const settingRouter = require('./routes/admin/settings');
 const userRouter = require('./routes/admin/users');
 const courseRouter = require('./routes/admin/courses');
 const chapterRouter = require('./routes/admin/chapters');
+const chartRouter = require('./routes/admin/chart');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/admin/settings', settingRouter)
 app.use('/admin/users', userRouter)
 app.use('/admin/courses', courseRouter)
 app.use('/admin/chapters', chapterRouter)
+app.use('/admin/charts', chartRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
