@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const adminAuth = require('./middlewares/admin-auth')
 require('dotenv').config()
 
 const indexRouter = require('./routes/index');
@@ -36,14 +37,14 @@ app.use('/users', usersRouter);
 
 
 // 使用后台文章列表路由
-app.use('/admin/articles', articleRouter);
-app.use('/admin/categories', categoryRouter);
-app.use('/admin/settings', settingRouter)
-app.use('/admin/users', userRouter)
-app.use('/admin/courses', courseRouter)
-app.use('/admin/chapters', chapterRouter)
-app.use('/admin/charts', chartRouter)
-app.use('/admin/auth', authRouter)
+app.use('/admin/articles',adminAuth, articleRouter);
+app.use('/admin/categories',adminAuth, categoryRouter);
+app.use('/admin/settings',adminAuth, settingRouter)
+app.use('/admin/users',adminAuth, userRouter)
+app.use('/admin/courses',adminAuth, courseRouter)
+app.use('/admin/chapters',adminAuth, chapterRouter)
+app.use('/admin/charts',adminAuth, chartRouter)
+app.use('/admin/auth', authRouter)    //不需要加上中间件，不能还没有登录就要验证登录
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

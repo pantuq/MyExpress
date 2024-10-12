@@ -41,6 +41,22 @@
               errors: [err.message]
           })
       }
+
+      if(err.name === 'JsonWebTokenError'){
+        res.json({
+            status: 401,
+            message: '认证失败',
+            errors: ['您提交的token错误']
+        })
+      }
+
+      if(err.name === 'TokenExpiredError'){
+        res.json({
+            status: 401,
+            message: '认证过期',
+            errors: ['您的token已过期']
+        })
+      }
   
       if(err.name === 'NotFoundError'){
           res.json({

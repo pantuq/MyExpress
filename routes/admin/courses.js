@@ -118,6 +118,8 @@ router.post('/', async function(req,res){
         // 白名单过滤
         // 防止用户将无关的数据插入在数据库中
         const body = filterBody(req)
+        // 获取当前登录的用户ID
+        body.userId = req.user.id
         const course =await Course.create(body);
 
         success(res,"课程新增成功",{course},201)
@@ -221,7 +223,6 @@ async function getCourse(req){
 function filterBody(req){
     return {
         categoryId: req.body.categoryId,
-        userId: req.body.userId,
         name: req.body.name,
         image: req.body.image,
         recommended: req.body.recommended,
