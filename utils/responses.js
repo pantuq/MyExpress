@@ -1,13 +1,3 @@
-/**
- * 自定义404错误
- */
-class NotFoundError extends Error {
-    constructor(message) {
-      super(message)
-      this.name = 'NotFoundError'
-    }
-  }
-  
   function success(res,message,data = {},code = 200){
       res.json({
           status: code,
@@ -35,6 +25,22 @@ class NotFoundError extends Error {
             errors: [err.message]
         })
       }
+
+      if(err.name === 'BadRequestError'){
+        res.json({
+            status: 400,
+            message: '请求参数错误',
+            errors: [err.message]
+        })
+      }
+
+      if(err.name === 'UnauthorizedError'){
+          res.json({
+              status: 401,
+              message: '用户未登录',
+              errors: [err.message]
+          })
+      }
   
       if(err.name === 'NotFoundError'){
           res.json({
@@ -52,7 +58,6 @@ class NotFoundError extends Error {
   }
   
   module.exports = {
-      NotFoundError,
       success,
       failure
   }

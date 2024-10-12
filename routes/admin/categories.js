@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const {Op} = require('sequelize');
 const {
-    NotFoundError,
     success,
     failure
-} = require('../../utils/response');
+} = require('../../utils/responses');
+const { NotFoundError } = require('../../utils/errors');
 
 const {Category,Course} = require('../../models');
 const category = require('../../models/category');

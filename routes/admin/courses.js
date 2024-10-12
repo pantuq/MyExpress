@@ -3,10 +3,10 @@ const router = express.Router();
 const { Category, User, Course, Chapter } = require('../../models');
 const {Op} = require('sequelize');
 const {
-    NotFoundError,
     success,
     failure
-} = require('../../utils/response');
+} = require('../../utils/responses');
+const { NotFoundError } = require('../../utils/errors');
 const course = require('../../models/course');
 
 // 引入Course
