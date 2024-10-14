@@ -6,9 +6,10 @@ const logger = require('morgan');
 const adminAuth = require('./middlewares/admin-auth')
 require('dotenv').config()
 
+// 前台数据路由
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-
+const categoriesRouter = require('./routes/categories');
 
 // 配置后台文章列表列表路由
 const articleRouter = require('./routes/admin/articles');
@@ -32,8 +33,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 使用前台数据路由
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/categories', categoriesRouter);
 
 
 // 使用后台文章列表路由
