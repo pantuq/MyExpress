@@ -13,6 +13,9 @@ const categoriesRouter = require('./routes/categories');
 const coursesRouter = require('./routes/courses');
 const chaptersRouter = require('./routes/chapters');
 const articlesRouter = require('./routes/articles');
+const settingsRouter = require('./routes/settings');
+const searchRouter = require('./routes/search');
+const authRouter = require('./routes/auth');
 
 // 配置后台文章列表列表路由
 const articleRouter = require('./routes/admin/articles');
@@ -22,7 +25,7 @@ const userRouter = require('./routes/admin/users');
 const courseRouter = require('./routes/admin/courses');
 const chapterRouter = require('./routes/admin/chapters');
 const chartRouter = require('./routes/admin/chart');
-const authRouter = require('./routes/admin/auth');
+const adminauthRouter = require('./routes/admin/auth');
 
 const app = express();
 
@@ -43,6 +46,9 @@ app.use('/categories', categoriesRouter);
 app.use('/courses', coursesRouter);
 app.use('/chapters', chaptersRouter);
 app.use('/articles', articlesRouter);
+app.use('/settings', settingsRouter);
+app.use('/search', searchRouter);
+app.use('/auth', authRouter)
 
 
 // 使用后台文章列表路由
@@ -53,7 +59,7 @@ app.use('/admin/users',adminAuth, userRouter)
 app.use('/admin/courses',adminAuth, courseRouter)
 app.use('/admin/chapters',adminAuth, chapterRouter)
 app.use('/admin/charts',adminAuth, chartRouter)
-app.use('/admin/auth', authRouter)    //不需要加上中间件，不能还没有登录就要验证登录
+app.use('/admin/auth', adminauthRouter)    //不需要加上中间件，不能还没有登录就要验证登录
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
