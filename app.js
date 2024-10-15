@@ -10,6 +10,7 @@ require('dotenv').config()
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const categoriesRouter = require('./routes/categories');
+const coursesRouter = require('./routes/courses');
 
 // 配置后台文章列表列表路由
 const articleRouter = require('./routes/admin/articles');
@@ -37,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
+app.use('/courses', coursesRouter);
 
 
 // 使用后台文章列表路由

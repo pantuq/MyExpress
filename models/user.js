@@ -3,6 +3,8 @@ const {
   Model
 } = require('sequelize');
 const bcrypt = require('bcryptjs');
+const moment = require('moment/moment');
+moment.locale('zh-cn');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -87,6 +89,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         isUrl: { msg: '图片地址不正确' }
+      }
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      get(){
+        return moment(this.getDataValue('createdAt')).format('LL');
+      }
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      get(){
+        return moment(this.getDataValue('updatedAt')).format('LL');
       }
     }
   }, {

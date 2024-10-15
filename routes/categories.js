@@ -9,7 +9,8 @@ router.get('/', async function(req, res, next) {
         const categories = await Category.findAll({
             order: [['rank','ASC'],['id','DESC']]
         })
-        success(res,'查询成功',{categories})
+        success(res,'查询分类成功',{categories})
+        // 忘记给categories加上大括号，报错
     }catch(err){
         failure(res,err)
     }
