@@ -12,6 +12,7 @@ const usersRouter = require('./routes/users');
 const categoriesRouter = require('./routes/categories');
 const coursesRouter = require('./routes/courses');
 const chaptersRouter = require('./routes/chapters');
+const articlesRouter = require('./routes/articles');
 
 // 配置后台文章列表列表路由
 const articleRouter = require('./routes/admin/articles');
@@ -41,6 +42,7 @@ app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/courses', coursesRouter);
 app.use('/chapters', chaptersRouter);
+app.use('/articles', articlesRouter);
 
 
 // 使用后台文章列表路由

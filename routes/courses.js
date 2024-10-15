@@ -10,8 +10,8 @@ const { NotFoundError } = require('../utils/errors');
 router.get('/',async function (req, res) {
     try{
         const query = req.query
-        const currentPage = Math.abs(Number(query.currentPage))
-        const pageSize = Math.abs(Number(query.pageSize))
+        const currentPage = Math.abs(Number(query.currentPage)) || 1
+        const pageSize = Math.abs(Number(query.pageSize)) || 10
         const offset = (currentPage - 1) * pageSize
 
         if(!query.categoryId){
