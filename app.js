@@ -6,6 +6,7 @@ const logger = require('morgan');
 const adminAuth = require('./middlewares/admin-auth')
 const userAuth = require('./middlewares/user-auth')
 require('dotenv').config()
+const cors = require('cors')
 
 // 前台数据路由
 const indexRouter = require('./routes/index');
@@ -39,6 +40,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 使用cors解决跨域
+app.use(cors())
 
 // 使用前台数据路由
 app.use('/', indexRouter);
