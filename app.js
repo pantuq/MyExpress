@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const adminAuth = require('./middlewares/admin-auth')
+const userAuth = require('./middlewares/user-auth')
 require('dotenv').config()
 
 // 前台数据路由
@@ -41,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 使用前台数据路由
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users',userAuth, usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/courses', coursesRouter);
 app.use('/chapters', chaptersRouter);
